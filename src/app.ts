@@ -1,4 +1,3 @@
-
 import express, { Application } from 'express';
 import Controller from './utils/interfaces/controllerInterface';
 import helmet, { contentSecurityPolicy } from 'helmet';
@@ -57,18 +56,21 @@ class App {
 
     private initialiseDatabaseConnection(): void {
         const { MONGO_USER, MONGO_PASSWORD, MONGO_PATH } = process.env;
-        console.log({ MONGO_USER, MONGO_PASSWORD, MONGO_PATH });
-        mongoose
-            .connect(`${MONGO_PATH}`, {
-                auth: {
-                    password: MONGO_PASSWORD,
-                    username: MONGO_USER,
-                },
-                authSource: 'admin',
-            })
-            .then(() => {
-                console.log('logged');
-            });
+        if (MONGO_USER !== '' && MONGO_PASSWORD !== '' && MONGO_PATH) {
+            mongoose
+                .connect(`${MONGO_PATH}`, {
+                    auth: {
+                        password: MONGO_PASSWORD,
+                        username: MONGO_USER,
+                    },
+                    authSource: 'admin',
+                })
+                .then(() => {
+                    console.log('logged');
+                });
+        } else {
+            console.log({ MONGO_USER, MONGO_PASSWORD, MONGO_PATH });
+        }
     }
 }
 

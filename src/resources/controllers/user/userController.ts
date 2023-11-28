@@ -8,8 +8,8 @@ import bcryptjs from 'bcryptjs';
 import { compare } from 'bcryptjs';
 
 import auth from '@/middleware/auth.middleware';
-import Multer from '@/middleware/multerMiddleware';
-import addImage from '@/utils/firebase/firebase';
+// import Multer from '@/middleware/multerMiddleware';
+// import addImage from '@/utils/firebase/firebase';
 
 class UserController implements Controller {
     public path = '/user';
@@ -30,8 +30,8 @@ class UserController implements Controller {
         this.router.patch(
             `${this.path}/editaccount`,
             auth,
-            Multer.any(),
-            addImage,
+            // Multer.any(),
+            // addImage,
             this.editarConta,
         );
         this.router.post(`${this.path}/delete`, auth, this.deleteaccount);
