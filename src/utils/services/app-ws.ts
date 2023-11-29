@@ -25,8 +25,18 @@ class SocketFactory {
 
     public onConnection(): void {
         SocketFactory.instance.wss.on('connection', (ws: any, req: any) => {
+            ws.id = Math.floor(Math.random() * Date.now() * 100000); //
+
+            function welcome(ip: string, id: string): string {
+                let m = {
+                    message: 'Welcome New Client!',
+                    id: id,
+                    ip: ip,
+                };
+                return JSON.stringify(m);
+            }
             ws.send(
-                `Welcome New Client! IP: ${req.socket.remoteAddress}`,
+                welcome(req.socket.remoteAddress, ws.id),
                 req.socket.remoteAddress,
             );
 
@@ -34,11 +44,21 @@ class SocketFactory {
                 const clients = SocketFactory.instance.wss.clients;
                 clients.forEach(function each(client: any) {
                     if (client !== ws && client.readyState === WebSocket.OPEN) {
-                        client.send(
-                            req.socket.remoteAddress +
-                                '=>' +
-                                message.toString('utf8'),
-                        );
+                        let dat = JSON.parse(message);
+                        let op = {
+                            sender_id: dat.sender_id,
+                            reciver_id: dat.reciver_id,
+                            message: dat.message,
+                        };
+                        // console.log(client.id, op, dat);
+                        if (client.id == op.reciver_id) {
+                            client.send(JSON.stringify(op));
+                            // client.send(
+                            //     req.socket.remoteAddress +
+                            //         '=>' +
+                            //         message.toString('utf8'),
+                            // );
+                        }
                     }
                 });
             });
